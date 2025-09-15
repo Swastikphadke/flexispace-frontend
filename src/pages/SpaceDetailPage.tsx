@@ -542,4 +542,5 @@ const SpaceDetailPage: React.FC = () => {
   );
 };
 
+export { SpaceDetailPage };
 export default SpaceDetailPage;

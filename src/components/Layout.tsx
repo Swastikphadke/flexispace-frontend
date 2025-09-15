@@ -22,7 +22,9 @@ import {
   Person as PersonIcon,
   Logout as LogoutIcon,
 } from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Home, User } from 'lucide-react';
 
 interface Props {
   children: React.ReactElement;
@@ -43,7 +45,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -63,8 +65,109 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const isMenuOpen = Boolean(anchorEl);
 
+  const navItems = [
+    { label: 'Home', path: '/', icon: Home },
+    { label: 'Search Spaces', path: '/search', icon: SearchIcon },
+    { label: 'Dashboard', path: '/dashboard', icon: User },
+  ];
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ minHeight: '100vh' }}>
+      {/* Navigation */}
+      <AppBar
+        position="fixed"
+        sx={{
+          background: 'rgba(10, 10, 15, 0.85)', // Updated background
+          backdropFilter: 'blur(20px)',
+          border: 'none',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+        }}
+      >
+        <Container maxWidth="lg">
+          <Toolbar sx={{ justifyContent: 'space-between' }}>
+            {/* Logo */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Typography
+                variant="h6"
+                component={Link}
+                to="/"
+                sx={{
+                  textDecoration: 'none',
+                  fontFamily: '"Space Grotesk", sans-serif',
+                  fontWeight: 700,
+                  background: 'linear-gradient(135deg, #8B5FBF 0%, #14B8A6 100%)', // Updated gradient
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  fontSize: '1.5rem',
+                }}
+              >
+                FlexiSpace
+              </Typography>
+            </motion.div>
+
+            {/* Navigation Items */}
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {navItems.map((item, index) => (
+                <motion.div
+                  key={item.path}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <Button
+                    component={Link}
+                    to={item.path}
+                    startIcon={<item.icon size={18} />}
+                    sx={{
+                      color: location.pathname === item.path ? '#A78BFA' : 'text.secondary', // Updated active color
+                      fontWeight: location.pathname === item.path ? 600 : 400,
+                      background: location.pathname === item.path
+                        ? 'rgba(139, 95, 191, 0.15)' // Updated background
+                        : 'transparent',
+                      border: location.pathname === item.path
+                        ? '1px solid rgba(139, 95, 191, 0.3)' // Updated border
+                        : '1px solid transparent',
+                      borderRadius: '12px',
+                      '&:hover': {
+                        background: 'rgba(139, 95, 191, 0.1)', // Updated hover
+                        color: '#A78BFA', // Updated hover color
+                      },
+                    }}
+                  >
+                    {item.label}
+                  </Button>
+                </motion.div>
+              ))}
+            </Box>
+
+            {/* Right side buttons */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <IconButton color="inherit">
+                <Badge badgeContent={3} color="secondary">
+                  <NotificationsIcon sx={{ color: 'text.primary' }} />
+                </Badge>
+              </IconButton>
+
+              <Avatar
+                onClick={handleProfileMenuOpen}
+                sx={{
+                  width: 36,
+                  height: 36,
+                  cursor: 'pointer',
+                  bgcolor: 'primary.main',
+                }}
+              >
+                U
+              </Avatar>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
       <HideOnScroll>
         <AppBar
           position="fixed"
@@ -200,4 +303,5 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
+// Make sure to have the default export
 export default Layout;

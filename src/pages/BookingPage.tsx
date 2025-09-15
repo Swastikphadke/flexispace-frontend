@@ -660,4 +660,5 @@ const BookingPage: React.FC = () => {
   );
 };
 
+export { BookingPage };
 export default BookingPage;

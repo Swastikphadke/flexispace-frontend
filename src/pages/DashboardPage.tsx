@@ -67,7 +67,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const UserDashboard: React.FC = () => {
+const DashboardPage: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
 
   // Mock user data
@@ -607,4 +607,5 @@ const UserDashboard: React.FC = () => {
   );
 };
 
-export default UserDashboard;
+export { DashboardPage };
+export default DashboardPage;

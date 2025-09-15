@@ -464,5 +464,5 @@ const SearchPage: React.FC = () => {
     </Container>
   );
 };
-
+export { SearchPage };
 export default SearchPage;
