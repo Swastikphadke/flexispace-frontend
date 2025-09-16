@@ -8,6 +8,7 @@ import SearchPage from './pages/SearchPage';
 import SpaceDetailPage from './pages/SpaceDetailPage';
 import BookingPage from './pages/BookingPage';
 import UserDashboard from './pages/UserDashboard';
+import HostSpacePage from './pages/HostSpacePage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/space/:id" element={<SpaceDetailPage />} />
             <Route path="/booking/:id" element={<BookingPage />} />
             <Route path="/dashboard" element={<UserDashboard />} />
+            <Route path="/host" element={<HostSpacePage />} />
           </Routes>
         </Layout>
       </Router>

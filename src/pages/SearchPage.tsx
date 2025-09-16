@@ -1,467 +1,496 @@
 import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { Box, Container, Typography, Card, CardMedia, CardContent, Chip, IconButton, Button, TextField, MenuItem, Select, FormControl, InputLabel, Stack, Rating } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import {
-  Container,
-  Typography,
-  Box,
-  TextField,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Chip,
-  Button,
-  Avatar,
-  Rating,
-  Paper,
-  Stack,
-  Autocomplete,
-  Slider,
-  FormControlLabel,
-  Checkbox,
-  InputAdornment,
-  Fab,
-} from '@mui/material';
-import {
-  Search as SearchIcon,
-  LocationOn as LocationIcon,
-  AutoAwesome as AIIcon,
-  FilterList as FilterIcon,
-  Star as StarIcon,
-  Schedule as ScheduleIcon,
-  People as PeopleIcon,
-  Square as SquareIcon,
-  Map as MapIcon,
+  Wifi as WifiIcon,
+  LocalParking as LocalParkingIcon,
+  Restaurant as RestaurantIcon,
+  AcUnit as AcUnitIcon,
+  MusicNote as MusicNoteIcon,
+  Videocam as VideocamIcon,
+  Kitchen as KitchenIcon,
+  Tv as TvIcon,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { Heart, MapPin, Users } from 'lucide-react';
+
+// UPDATED: 10 Comprehensive Bengaluru Venues with FIXED icons
+const venues = [
+  {
+    id: 1,
+    name: 'The Canvas - Indiranagar Art Studio',
+    location: 'Indiranagar, Bengaluru',
+    price: '₹3,200/hour',
+    rating: 4.9,
+    reviews: 87,
+    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 25 people',
+    amenities: [
+      { icon: <WifiIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'High-Speed WiFi' },
+      { icon: <VideocamIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Photo Setup' },
+    ],
+    tags: ['Instant Book', 'Great for Exhibitions'],
+    description: 'A bright, airy art studio perfect for exhibitions, workshops, and creative events.',
+  },
+  {
+    id: 2,
+    name: 'EGL Tech Park - Boardroom Alpha',
+    location: 'Electronic City, Bengaluru',
+    price: '₹4,500/hour',
+    rating: 4.8,
+    reviews: 134,
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 12 people',
+    amenities: [
+      { icon: <TvIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: '4K Display' },
+      { icon: <WifiIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Enterprise WiFi' },
+    ],
+    tags: ['Corporate Ready', 'Prime Location'],
+    description: 'Professional boardroom with state-of-the-art AV equipment for corporate meetings.',
+  },
+  {
+    id: 3,
+    name: 'Jayanagar Public Hall & Grounds',
+    location: 'Jayanagar, Bengaluru',
+    price: '₹18,000/day',
+    rating: 4.7,
+    reviews: 203,
+    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 200 people',
+    amenities: [
+      { icon: <LocalParkingIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Free Parking' },
+      { icon: <RestaurantIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Catering Allowed' },
+    ],
+    tags: ['Large Events', 'Traditional'],
+    description: 'Spacious community hall perfect for weddings, cultural events, and large gatherings.',
+  },
+  {
+    id: 4,
+    name: 'Sky Garden - Koramangala Rooftop',
+    location: 'Koramangala, Bengaluru',
+    price: '₹8,500/4 hours',
+    rating: 5.0,
+    reviews: 156,
+    image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 50 people',
+    amenities: [
+      { icon: <RestaurantIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Bar Service' },
+      { icon: <MusicNoteIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Sound System' },
+    ],
+    tags: ['Rooftop Views', 'Instagram-worthy'],
+    description: 'Stunning rooftop venue with panoramic city views, perfect for startup events and networking.',
+  },
+  {
+    id: 5,
+    name: 'VoiceBox - JP Nagar Podcast Studio',
+    location: 'JP Nagar, Bengaluru',
+    price: '₹1,800/hour',
+    rating: 5.0,
+    reviews: 45,
+    image: 'https://images.unsplash.com/photo-1544571171-b6ad9c5f2d12?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 4 people',
+    amenities: [
+      { icon: <MusicNoteIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Pro Audio' },
+      { icon: <AcUnitIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Soundproof' },
+    ],
+    tags: ['Fully Equipped', 'Professional'],
+    description: 'Fully soundproofed podcast studio with professional mics and on-site audio technician.',
+  },
+  {
+    id: 6,
+    name: 'The Cook\'s Table - Malleswaram',
+    location: 'Malleswaram, Bengaluru',
+    price: '₹5,000/half-day',
+    rating: 4.8,
+    reviews: 60,
+    image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 15 people',
+    amenities: [
+      { icon: <KitchenIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Commercial Kitchen' },
+      { icon: <LocalParkingIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Parking Available' },
+    ],
+    tags: ['FSSAI Certified', 'Culinary Workshops'],
+    description: 'Certified commercial kitchen perfect for culinary workshops and F&B startups.',
+  },
+  {
+    id: 7,
+    name: 'The Floor - Basavanagudi Dance Studio',
+    location: 'Basavanagudi, Bengaluru',
+    price: '₹2,000/hour',
+    rating: 4.9,
+    reviews: 105,
+    image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 30 people',
+    amenities: [
+      { icon: <MusicNoteIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Sound System' },
+      { icon: <AcUnitIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'AC Available' },
+    ],
+    tags: ['Great for Workshops', 'Mirrored Walls'],
+    description: 'Beautiful studio with mirrored walls, ideal for dance classes, yoga, and fitness bootcamps.',
+  },
+  {
+    id: 8,
+    name: 'The Screening Room - Lavelle Road',
+    location: 'Lavelle Road, Bengaluru',
+    price: '₹7,500/3-hour slot',
+    rating: 5.0,
+    reviews: 30,
+    image: 'https://images.unsplash.com/photo-1489599112536-2c5c93742038?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 20 people',
+    amenities: [
+      { icon: <TvIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: '4K Projection' },
+      { icon: <AcUnitIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Climate Control' },
+    ],
+    tags: ['Luxury Experience', 'Private Cinema'],
+    description: 'Exclusive mini-theatre with 4K projection and Dolby Atmos sound for private screenings.',
+  },
+  {
+    id: 9,
+    name: 'WeWork Residency Road - Training Hall',
+    location: 'Residency Road, Bengaluru',
+    price: '₹6,000/hour',
+    rating: 4.7,
+    reviews: 88,
+    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 50 people',
+    amenities: [
+      { icon: <WifiIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Enterprise WiFi' },
+      { icon: <RestaurantIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Refreshments' },
+    ],
+    tags: ['Prime Location', 'Corporate Training'],
+    description: 'Versatile training space in the heart of the city, perfect for corporate seminars and workshops.',
+  },
+  {
+    id: 10,
+    name: 'The Secret Garden - Whitefield',
+    location: 'Whitefield, Bengaluru',
+    price: '₹15,000/day',
+    rating: 4.8,
+    reviews: 55,
+    image: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    capacity: 'Up to 80 people',
+    amenities: [
+      { icon: <LocalParkingIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Ample Parking' },
+      { icon: <KitchenIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Catering Kitchen' },
+    ],
+    tags: ['Outdoor Space', 'Garden Venue'],
+    description: 'Serene private garden venue ideal for intimate gatherings and outdoor events.',
+  },
+];
 
 const SearchPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [savedVenues, setSavedVenues] = useState<number[]>([]);
+  const [sortBy, setSortBy] = useState('relevance');
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState({
-    location: '',
-    spaceType: '',
-    capacity: [1, 100],
-    priceRange: [10, 500],
-    amenities: [] as string[],
+  const [location, setLocation] = useState('');
+  const [priceRange, setPriceRange] = useState([0, 20000]);
+  const [capacity, setCapacity] = useState(0);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  const toggleSave = (venueId: number) => {
+    setSavedVenues(prev => 
+      prev.includes(venueId) 
+        ? prev.filter(id => id !== venueId)
+        : [...prev, venueId]
+    );
+  };
+
+  // Filter venues based on search criteria
+  // Helper to extract numeric price
+  const getVenuePrice = (venue: any) => {
+    const match = venue.price.match(/\d+[\d,]*/);
+    return match ? parseInt(match[0].replace(/,/g, '')) : 0;
+  };
+  // Helper to extract numeric capacity
+  const getVenueCapacity = (venue: any) => {
+    const match = venue.capacity.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+  };
+  const filteredVenues = venues.filter(venue => {
+    const matchesSearch = searchQuery === '' || 
+      venue.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      venue.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesLocation = location === '' || 
+      venue.location.toLowerCase().includes(location.toLowerCase());
+    const price = getVenuePrice(venue);
+    const matchesPrice = price >= priceRange[0] && price <= priceRange[1];
+    const cap = getVenueCapacity(venue);
+    const matchesCapacity = capacity === 0 || cap >= capacity;
+    const matchesAmenities = selectedAmenities.length === 0 || selectedAmenities.every(a => venue.amenities.some((am: any) => am.label === a));
+    return matchesSearch && matchesLocation && matchesPrice && matchesCapacity && matchesAmenities;
   });
-  const [showFilters, setShowFilters] = useState(false);
 
-  // Mock data for demonstration
-  const mockSpaces = [
-    {
-      id: 1,
-      title: 'Lincoln Elementary School Playground',
-      description: 'Large outdoor playground with modern equipment, perfect for community events and sports activities.',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      location: 'Downtown, San Francisco',
-      price: 45,
-      capacity: 150,
-      area: 5000,
-      rating: 4.8,
-      reviews: 24,
-      amenities: ['Parking', 'Restrooms', 'Playground Equipment', 'Security'],
-      spaceType: 'Playground',
-      owner: {
-        name: 'SF School District',
-        avatar: 'S',
-        verified: true,
-      },
-      demandLevel: 'high',
-    },
-    {
-      id: 2,
-      title: 'Tech Corp Conference Center',
-      description: 'Modern conference hall with state-of-the-art AV equipment, ideal for corporate events and presentations.',
-      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      location: 'SOMA, San Francisco',
-      price: 125,
-      capacity: 80,
-      area: 2500,
-      rating: 4.9,
-      reviews: 18,
-      amenities: ['WiFi', 'Projector', 'Catering Kitchen', 'Parking'],
-      spaceType: 'Conference Room',
-      owner: {
-        name: 'TechCorp Inc.',
-        avatar: 'T',
-        verified: true,
-      },
-      demandLevel: 'medium',
-    },
-    {
-      id: 3,
-      title: 'City Hall Community Room',
-      description: 'Historic community space perfect for town halls, meetings, and cultural events.',
-      image: 'https://images.unsplash.com/photo-1582653291997-079a1c04e5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      location: 'Civic Center, San Francisco',
-      price: 35,
-      capacity: 120,
-      area: 3200,
-      rating: 4.6,
-      reviews: 32,
-      amenities: ['Sound System', 'Stage', 'Accessibility', 'Historical Significance'],
-      spaceType: 'Community Hall',
-      owner: {
-        name: 'SF City Government',
-        avatar: 'C',
-        verified: true,
-      },
-      demandLevel: 'low',
-    },
-    {
-      id: 4,
-      title: 'Corporate Parking Lot',
-      description: 'Large parking area available during weekends and evenings for events and markets.',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-      location: 'Financial District, SF',
-      price: 25,
-      capacity: 200,
-      area: 8000,
-      rating: 4.4,
-      reviews: 12,
-      amenities: ['Security', 'Easy Access', 'Lighting', 'Level Surface'],
-      spaceType: 'Parking Lot',
-      owner: {
-        name: 'Finance Corp',
-        avatar: 'F',
-        verified: false,
-      },
-      demandLevel: 'medium',
-    },
-  ];
-
-  const spaceTypes = ['Playground', 'Conference Room', 'Community Hall', 'Parking Lot', 'Office Space', 'Outdoor Area'];
-  const amenitiesOptions = ['WiFi', 'Parking', 'Restrooms', 'Projector', 'Sound System', 'Catering Kitchen', 'Security', 'Accessibility'];
-
-  const getDemandColor = (level: string) => {
-    switch (level) {
-      case 'high': return '#ef4444';
-      case 'medium': return '#f59e0b';
-      case 'low': return '#10b981';
-      default: return '#6b7280';
+  const sortedVenues = [...filteredVenues].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        return parseInt(a.price.replace(/[₹,]/g, '')) - parseInt(b.price.replace(/[₹,]/g, ''));
+      case 'price-high':
+        return parseInt(b.price.replace(/[₹,]/g, '')) - parseInt(a.price.replace(/[₹,]/g, ''));
+      case 'rating':
+        return b.rating - a.rating;
+      default:
+        return 0;
     }
-  };
-
-  const handleSearch = () => {
-    // AI search logic would go here
-    console.log('Searching for:', searchQuery, filters);
-  };
+  });
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      {/* Hero Search Section */}
-      <Paper
-        elevation={4}
-        sx={{
-          background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-          color: 'white',
-          p: 6,
-          borderRadius: 4,
-          mb: 4,
-        }}
-      >
-        <Box textAlign="center" mb={4}>
-          <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
-            Find Your Perfect Space
-          </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
-            Use AI-powered search to discover spaces that match your exact needs
+    <Box sx={{ py: 4, backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
+      <Container maxWidth="xl">
+        {/* Map View */}
+        <Box sx={{ mb: 3 }}>
+          <Card sx={{ height: 360, borderRadius: 3, overflow: 'hidden' }}>
+            <MapContainer center={[12.9716, 77.5946]} zoom={12} style={{ height: 360, width: '100%' }} scrollWheelZoom={false}>
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {/* Example markers for venues with fake coordinates */}
+              {venues.slice(0, 5).map((venue, i) => (
+                <Marker key={venue.id} position={[12.97 + i * 0.01, 77.59 + i * 0.01]}>
+                  <Popup>
+                    <b>{venue.name}</b><br />
+                    {venue.location}
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </Card>
+        </Box>
+
+        {/* Header */}
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: '#2D2D2D', mb: 2 }}>
+            {searchQuery || location ? `Showing ${filteredVenues.length} results${searchQuery ? ` for '${searchQuery}'` : ''}${location ? ` in '${location}'` : ''}` : 'Explore Amazing Spaces in Bengaluru'}
           </Typography>
         </Box>
 
-        <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+        {/* Filters */}
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 4 }}>
           <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Try: 'A quiet place for 20-person yoga workshop' or 'Outdoor space for food stall'"
+            size="small"
+            placeholder="Search spaces, venues, or activities..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{
-              bgcolor: 'white',
-              borderRadius: 2,
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-              },
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AIIcon sx={{ color: 'primary.main' }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Button
-                    variant="contained"
-                    onClick={handleSearch}
-                    sx={{
-                      borderRadius: 1.5,
-                      px: 3,
-                      py: 1.5,
-                    }}
-                  >
-                    Search
-                  </Button>
-                </InputAdornment>
-              ),
-            }}
+            sx={{ flex: 1 }}
           />
-        </Box>
-      </Paper>
-
-      <Grid container spacing={4}>
-        {/* Filters Sidebar */}
-        <Grid item xs={12} md={3}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-            <Box display="flex" alignItems="center" mb={3}>
-              <FilterIcon sx={{ mr: 1, color: 'primary.main' }} />
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Filters
-              </Typography>
-            </Box>
-
-            <Stack spacing={3}>
-              {/* Location */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                  Location
-                </Typography>
-                <Autocomplete
-                  options={['Downtown SF', 'SOMA', 'Mission', 'Castro', 'Richmond']}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Enter location"
-                      size="small"
-                    />
-                  )}
-                />
-              </Box>
-
-              {/* Space Type */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                  Space Type
-                </Typography>
-                <Autocomplete
-                  options={spaceTypes}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      placeholder="Select type"
-                      size="small"
-                    />
-                  )}
-                />
-              </Box>
-
-              {/* Capacity */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                  Capacity: {filters.capacity[0]} - {filters.capacity[1]} people
-                </Typography>
-                <Slider
-                  value={filters.capacity}
-                  onChange={(_, newValue) => setFilters({ ...filters, capacity: newValue as number[] })}
-                  valueLabelDisplay="auto"
-                  min={1}
-                  max={300}
-                  color="primary"
-                />
-              </Box>
-
-              {/* Price Range */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                  Price: ${filters.priceRange[0]} - ${filters.priceRange[1]}/hour
-                </Typography>
-                <Slider
-                  value={filters.priceRange}
-                  onChange={(_, newValue) => setFilters({ ...filters, priceRange: newValue as number[] })}
-                  valueLabelDisplay="auto"
-                  min={10}
-                  max={1000}
-                  color="primary"
-                />
-              </Box>
-
-              {/* Amenities */}
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                  Amenities
-                </Typography>
-                {amenitiesOptions.slice(0, 6).map((amenity) => (
-                  <FormControlLabel
-                    key={amenity}
-                    control={<Checkbox size="small" />}
-                    label={amenity}
-                    sx={{ display: 'block' }}
-                  />
-                ))}
-              </Box>
-            </Stack>
-          </Paper>
-        </Grid>
-
-        {/* Results */}
-        <Grid item xs={12} md={9}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
-              {mockSpaces.length} spaces found
-            </Typography>
-            <Button
-              variant="outlined"
-              startIcon={<MapIcon />}
-              sx={{ borderRadius: 2 }}
+          <TextField
+            size="small"
+            placeholder="Location (e.g., Indiranagar, Koramangala)"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            sx={{ flex: 1 }}
+          />
+          <TextField
+            size="small"
+            type="number"
+            label="Min Capacity"
+            value={capacity}
+            onChange={(e) => setCapacity(Number(e.target.value))}
+            sx={{ width: 120 }}
+            inputProps={{ min: 0 }}
+          />
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Typography variant="body2">Price:</Typography>
+            <TextField
+              size="small"
+              type="number"
+              value={priceRange[0]}
+              onChange={e => setPriceRange([Number(e.target.value), priceRange[1]])}
+              sx={{ width: 80 }}
+              inputProps={{ min: 0 }}
+            />
+            <Typography variant="body2">to</Typography>
+            <TextField
+              size="small"
+              type="number"
+              value={priceRange[1]}
+              onChange={e => setPriceRange([priceRange[0], Number(e.target.value)])}
+              sx={{ width: 80 }}
+              inputProps={{ min: 0 }}
+            />
+          </Stack>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <InputLabel>Amenities</InputLabel>
+            <Select
+              multiple
+              value={selectedAmenities}
+              onChange={e => setSelectedAmenities(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
+              label="Amenities"
+              renderValue={selected => selected.join(', ')}
             >
-              Map View
-            </Button>
-          </Box>
+              {['High-Speed WiFi', 'Photo Setup', '4K Display', 'Enterprise WiFi', 'Free Parking', 'Catering Allowed', 'Bar Service', 'Sound System', 'Pro Audio', 'Soundproof', 'Commercial Kitchen', 'Parking Available', '4K Projection', 'Climate Control', 'Refreshments', 'Ample Parking', 'Catering Kitchen'].map(a => (
+                <MenuItem key={a} value={a}>{a}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel>Sort by</InputLabel>
+            <Select value={sortBy} label="Sort by" onChange={(e) => setSortBy(e.target.value)}>
+              <MenuItem value="relevance">Relevance</MenuItem>
+              <MenuItem value="price-low">Price (Low to High)</MenuItem>
+              <MenuItem value="price-high">Price (High to Low)</MenuItem>
+              <MenuItem value="rating">Rating</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
 
-          <Grid container spacing={3}>
-            {mockSpaces.map((space, index) => (
-              <Grid item xs={12} md={6} lg={4} key={space.id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+        {/* Listings */}
+        <Grid container spacing={3}>
+          {sortedVenues.map((venue, index) => (
+            <Grid xs={12} md={6} lg={4} key={venue.id}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card
+                  sx={{
+                    height: '100%',
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    transition: 'all 200ms ease-in-out',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+                    },
+                  }}
                 >
-                  <Card
-                    sx={{
-                      height: '100%',
-                      borderRadius: 3,
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        transform: 'translateY(-4px)',
-                        boxShadow: '0 12px 24px rgba(0,0,0,0.15)',
-                      },
-                    }}
-                  >
+                  {/* Image with Save Icon */}
+                  <Box sx={{ position: 'relative' }}>
                     <CardMedia
                       component="img"
                       height="200"
-                      image={space.image}
-                      alt={space.title}
-                      sx={{ position: 'relative' }}
+                      image={venue.image}
+                      alt={venue.name}
                     />
                     
-                    {/* Demand Level Badge */}
-                    <Chip
-                      label={`${space.demandLevel} demand`}
-                      size="small"
+                    {/* UPDATED: Save (Heart) Icon */}
+                    <IconButton
+                      onClick={() => toggleSave(venue.id)}
                       sx={{
                         position: 'absolute',
-                        top: 12,
-                        left: 12,
-                        bgcolor: getDemandColor(space.demandLevel),
-                        color: 'white',
-                        fontWeight: 600,
+                        top: 8,
+                        right: 8,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        '&:hover': { backgroundColor: 'rgba(255, 255, 255, 1)' },
                       }}
-                    />
+                    >
+                      <Heart
+                        size={20}
+                        fill={savedVenues.includes(venue.id) ? '#FF5A5F' : 'none'}
+                        color={savedVenues.includes(venue.id) ? '#FF5A5F' : '#6B7280'}
+                      />
+                    </IconButton>
 
-                    <CardContent sx={{ p: 3 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                        {space.title}
-                      </Typography>
-                      
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mb: 2, minHeight: 40 }}
-                      >
-                        {space.description}
-                      </Typography>
-
-                      <Box display="flex" alignItems="center" mb={2}>
-                        <LocationIcon sx={{ fontSize: 16, color: 'text.secondary', mr: 0.5 }} />
-                        <Typography variant="body2" color="text.secondary">
-                          {space.location}
-                        </Typography>
-                      </Box>
-
-                      <Stack direction="row" spacing={2} mb={2}>
-                        <Box display="flex" alignItems="center">
-                          <PeopleIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
-                          <Typography variant="body2" color="text.secondary">
-                            {space.capacity}
-                          </Typography>
-                        </Box>
-                        <Box display="flex" alignItems="center">
-                          <SquareIcon sx={{ fontSize: 16, mr: 0.5, color: 'text.secondary' }} />
-                          <Typography variant="body2" color="text.secondary">
-                            {space.area} sq ft
-                          </Typography>
-                        </Box>
-                      </Stack>
-
-                      <Box display="flex" flexWrap="wrap" gap={0.5} mb={2}>
-                        {space.amenities.slice(0, 3).map((amenity) => (
+                    {/* Tags */}
+                    <Box sx={{ position: 'absolute', bottom: 8, left: 8 }}>
+                      <Stack direction="row" spacing={1}>
+                        {venue.tags.slice(0, 1).map((tag, idx) => (
                           <Chip
-                            key={amenity}
-                            label={amenity}
+                            key={idx}
+                            label={tag}
                             size="small"
-                            variant="outlined"
+                            sx={{
+                              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                              color: '#2D2D2D',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                            }}
                           />
                         ))}
-                        {space.amenities.length > 3 && (
-                          <Chip
-                            label={`+${space.amenities.length - 3}`}
-                            size="small"
-                            variant="outlined"
-                          />
-                        )}
-                      </Box>
+                      </Stack>
+                    </Box>
+                  </Box>
 
-                      <Box display="flex" justifyContent="space-between" alignItems="center">
-                        <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                            ${space.price}/hour
-                          </Typography>
-                          <Box display="flex" alignItems="center">
-                            <Rating value={space.rating} readOnly size="small" />
-                            <Typography variant="body2" sx={{ ml: 0.5 }}>
-                              ({space.reviews})
+                  <CardContent sx={{ p: 3 }}>
+                    {/* Venue Name & Rating */}
+                    <Box sx={{ mb: 2 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 600,
+                          color: '#2D2D2D',
+                          mb: 1,
+                          fontSize: '1.1rem',
+                        }}
+                      >
+                        {venue.name}
+                      </Typography>
+                      
+                      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                        <Rating value={venue.rating} readOnly size="small" />
+                        <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                          {venue.rating} ({venue.reviews} reviews)
+                        </Typography>
+                      </Stack>
+
+                      <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <MapPin size={14} color="#6B7280" />
+                        <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                          {venue.location}
+                        </Typography>
+                      </Stack>
+                    </Box>
+
+                    {/* UPDATED: Capacity & Amenities */}
+                    <Box sx={{ mb: 2 }}>
+                      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mb: 1 }}>
+                        <Users size={14} color="#FF5A5F" />
+                        <Typography variant="body2" sx={{ color: '#2D2D2D', fontWeight: 500 }}>
+                          {venue.capacity}
+                        </Typography>
+                      </Stack>
+                      
+                      <Stack direction="row" spacing={1} flexWrap="wrap">
+                        {venue.amenities.map((amenity, idx) => (
+                          <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            {amenity.icon}
+                            <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                              {amenity.label}
                             </Typography>
                           </Box>
-                        </Box>
-                        
-                        <Box display="flex" alignItems="center">
-                          <Avatar
-                            sx={{ width: 32, height: 32, mr: 1, bgcolor: 'primary.main' }}
-                          >
-                            {space.owner.avatar}
-                          </Avatar>
-                          {space.owner.verified && (
-                            <StarIcon sx={{ fontSize: 16, color: 'warning.main' }} />
-                          )}
-                        </Box>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-            ))}
-          </Grid>
-        </Grid>
-      </Grid>
+                        ))}
+                      </Stack>
+                    </Box>
 
-      {/* Floating Action Button for AI Search */}
-      <Fab
-        color="secondary"
-        sx={{
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          zIndex: 1000,
-        }}
-        onClick={() => {
-          // Open AI search modal
-          console.log('Open AI search assistant');
-        }}
-      >
-        <AIIcon />
-      </Fab>
-    </Container>
+                    {/* Price & Book Button */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 700,
+                          color: '#FF5A5F',
+                        }}
+                      >
+                        {venue.price}
+                      </Typography>
+                      
+                      <Button
+                        variant="contained"
+                        size="small"
+                        sx={{
+                          backgroundColor: '#FF5A5F',
+                          '&:hover': { backgroundColor: '#E6444A' },
+                          borderRadius: 2,
+                          px: 2,
+                        }}
+                        onClick={() => navigate(`/booking/${venue.id}`)}
+                      >
+                        Book Now
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

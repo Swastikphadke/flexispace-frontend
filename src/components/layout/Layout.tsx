@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -8,45 +8,51 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  IconButton,
-  Badge,
   Container,
-  useScrollTrigger,
-  Slide,
+  
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  Add as AddIcon,
-  Notifications as NotificationsIcon,
   Dashboard as DashboardIcon,
-  Person as PersonIcon,
+  Help as HelpIcon,
   Logout as LogoutIcon,
+  Home as HomeIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
-
-interface Props {
-  children: React.ReactElement;
-}
-
-function HideOnScroll(props: Props) {
-  const { children } = props;
-  const trigger = useScrollTrigger();
-
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  // const [visible, setVisible] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Smart scrolling header
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+  // const isScrollingDown = prevScrollPos < currentScrollPos;
+
+      setIsScrolled(currentScrollPos > 20);
+      // Optionally toggle visibility for advanced header behavior
+      // setVisible(
+      //   (prevScrollPos > currentScrollPos && currentScrollPos > 100) ||
+      //     currentScrollPos < 10
+      // );
+
+      setPrevScrollPos(currentScrollPos);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [prevScrollPos]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -62,140 +68,202 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   const isMenuOpen = Boolean(anchorEl);
+  const isLoggedIn = true; // Replace with actual auth state
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <HideOnScroll>
-        <AppBar
-          position="fixed"
-          sx={{
-            bgcolor: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(10px)',
-            color: 'text.primary',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <Container maxWidth="xl">
-            <Toolbar>
-              {/* Logo */}
-              <Box
-                onClick={() => navigate('/')}
+    <Box sx={{ minHeight: '100vh' }}>
+      {/* FIXED: Always Visible Navigation Header */}
+      <AppBar
+        position="sticky"
+        sx={{
+          background: isScrolled
+            ? 'rgba(255, 255, 255, 0.98)'
+            : 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: isScrolled ? '1px solid #E5E7EB' : 'none',
+          boxShadow: isScrolled
+            ? '0 2px 8px rgba(0, 0, 0, 0.08)'
+            : '0 1px 3px rgba(0, 0, 0, 0.05)',
+          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          zIndex: 1100,
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
+            {/* Logo - Always Links to Home */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Typography
+                variant="h6"
+                component={Link}
+                to="/"
                 sx={{
+                  textDecoration: 'none',
+                  fontFamily: '"Space Grotesk", sans-serif',
+                  fontWeight: 700,
+                  color: '#FF5A5F',
+                  fontSize: '1.5rem',
+                  letterSpacing: '-0.02em',
                   display: 'flex',
                   alignItems: 'center',
-                  cursor: 'pointer',
-                  mr: 4,
+                  gap: 1,
                 }}
               >
-                <Box
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    bgcolor: 'primary.main',
-                    borderRadius: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    mr: 1,
-                  }}
+                <HomeIcon sx={{ fontSize: '1.2rem' }} />
+                FlexiSpace
+              </Typography>
+            </motion.div>
+
+            {/* Essential Navigation Links */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+              {/* Search Spaces */}
+              <Button
+                component={Link}
+                to="/search"
+                startIcon={<SearchIcon />}
+                sx={{
+                  color: location.pathname === '/search' ? '#FF5A5F' : '#4B5563',
+                  fontWeight: location.pathname === '/search' ? 600 : 500,
+                  background:
+                    location.pathname === '/search'
+                      ? 'rgba(255, 90, 95, 0.1)'
+                      : 'transparent',
+                  borderRadius: '8px',
+                  px: 2,
+                  py: 1,
+                  '&:hover': {
+                    background: 'rgba(255, 90, 95, 0.05)',
+                    color: '#FF5A5F',
+                  },
+                }}
+              >
+                Search Spaces
+              </Button>
+
+              {/* List Your Space */}
+              <Button
+                component={Link}
+                to="/host"
+                startIcon={<AddIcon />}
+                variant="outlined"
+                sx={{
+                  borderColor: '#E5E7EB',
+                  color: '#4B5563',
+                  '&:hover': {
+                    borderColor: '#FF5A5F',
+                    background: 'rgba(255, 90, 95, 0.04)',
+                    color: '#FF5A5F',
+                  },
+                }}
+              >
+                List Your Space
+              </Button>
+
+              {/* User Profile/Login */}
+              {isLoggedIn ? (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Typography
-                    variant="h6"
-                    sx={{ color: 'white', fontWeight: 800 }}
+                  <Avatar
+                    onClick={handleProfileMenuOpen}
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      cursor: 'pointer',
+                      backgroundColor: '#FF5A5F',
+                      color: 'white',
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      border: '2px solid #FFFFFF',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                    }}
                   >
-                    F
-                  </Typography>
-                </Box>
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{ fontWeight: 700, color: 'primary.main' }}
-                >
-                  FlexiSpace
-                </Typography>
-              </Box>
-
-              {/* Navigation Buttons */}
-              <Box sx={{ flexGrow: 1, display: 'flex', gap: 2 }}>
+                    S
+                  </Avatar>
+                </motion.div>
+              ) : (
                 <Button
-                  color="inherit"
-                  startIcon={<SearchIcon />}
-                  onClick={() => navigate('/search')}
+                  variant="contained"
+                  onClick={() => navigate('/login')}
                   sx={{
-                    color: location.pathname === '/search' ? 'primary.main' : 'text.primary',
+                    backgroundColor: '#FF5A5F',
+                    '&:hover': { backgroundColor: '#E6444A' },
                   }}
                 >
-                  Explore Spaces
+                  Login
                 </Button>
-                <Button
-                  color="inherit"
-                  startIcon={<AddIcon />}
-                  sx={{ color: 'text.primary' }}
-                >
-                  List Your Space
-                </Button>
-              </Box>
+              )}
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
 
-              {/* Right side buttons */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <IconButton color="inherit">
-                  <Badge badgeContent={3} color="secondary">
-                    <NotificationsIcon sx={{ color: 'text.primary' }} />
-                  </Badge>
-                </IconButton>
-
-                <Avatar
-                  onClick={handleProfileMenuOpen}
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    cursor: 'pointer',
-                    bgcolor: 'primary.main',
-                  }}
-                >
-                  U
-                </Avatar>
-              </Box>
-            </Toolbar>
-          </Container>
-        </AppBar>
-      </HideOnScroll>
-
-      {/* Profile Menu */}
+      {/* Simplified Profile Menu */}
       <Menu
         anchorEl={anchorEl}
         open={isMenuOpen}
         onClose={handleMenuClose}
         onClick={handleMenuClose}
         PaperProps={{
-          elevation: 4,
+          elevation: 3,
           sx: {
             mt: 1.5,
-            borderRadius: 2,
-            minWidth: 200,
+            borderRadius: '12px',
+            minWidth: 180,
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E5E7EB',
+            boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
           },
         }}
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={() => handleNavigation('/dashboard')}>
-          <DashboardIcon sx={{ mr: 1 }} />
+        <MenuItem
+          onClick={() => handleNavigation('/dashboard')}
+          sx={{
+            color: '#2D2D2D',
+            borderRadius: '8px',
+            mx: 1,
+            my: 0.5,
+            '&:hover': { backgroundColor: 'rgba(255, 90, 95, 0.04)' },
+          }}
+        >
+          <DashboardIcon sx={{ mr: 2, color: '#FF5A5F' }} />
           Dashboard
         </MenuItem>
-        <MenuItem onClick={() => handleNavigation('/profile')}>
-          <PersonIcon sx={{ mr: 1 }} />
-          Profile
+        <MenuItem
+          onClick={() => handleNavigation('/help')}
+          sx={{
+            color: '#2D2D2D',
+            borderRadius: '8px',
+            mx: 1,
+            my: 0.5,
+            '&:hover': { backgroundColor: 'rgba(255, 90, 95, 0.04)' },
+          }}
+        >
+          <HelpIcon sx={{ mr: 2, color: '#007BFF' }} />
+          Help Center
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <LogoutIcon sx={{ mr: 1 }} />
+        <MenuItem
+          onClick={handleMenuClose}
+          sx={{
+            color: '#2D2D2D',
+            borderRadius: '8px',
+            mx: 1,
+            my: 0.5,
+            '&:hover': { backgroundColor: 'rgba(239, 68, 68, 0.04)' },
+          }}
+        >
+          <LogoutIcon sx={{ mr: 2, color: '#EF4444' }} />
           Logout
         </MenuItem>
       </Menu>
 
       {/* Main Content */}
-      <Box sx={{ pt: 8 }}>
-        {children}
-      </Box>
+      <Box>{children}</Box>
     </Box>
   );
 };

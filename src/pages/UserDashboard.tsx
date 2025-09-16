@@ -3,7 +3,6 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
   Avatar,
@@ -20,12 +19,11 @@ import {
   ListItemSecondaryAction,
   IconButton,
   LinearProgress,
-  Divider,
   Badge,
   Alert,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import {
-  Dashboard as DashboardIcon,
   CalendarToday as CalendarIcon,
   Star as StarIcon,
   LocationOn as LocationIcon,
@@ -36,10 +34,7 @@ import {
   AccountBalance as WalletIcon,
   Favorite as FavoriteIcon,
   QrCode as QrCodeIcon,
-  Download as DownloadIcon,
   MoreVert as MoreIcon,
-  TrendingUp as TrendingIcon,
-  Loyalty as LoyaltyIcon,
   AssignmentTurnedIn as CompletedIcon,
   Pending as PendingIcon,
   Cancel as CancelledIcon,
@@ -83,8 +78,16 @@ const UserDashboard: React.FC = () => {
     savedSpaces: 8,
   };
 
-  // Mock booking history
+  // Load bookings from localStorage and prepend to mock data
+  const localBookings = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('bookings') || '[]');
+    } catch {
+      return [];
+    }
+  })();
   const bookings = [
+    ...localBookings,
     {
       id: 1,
       space: {
@@ -185,7 +188,7 @@ const UserDashboard: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+  <Box sx={{ py: 4, backgroundColor: '#F8FAFC', minHeight: '100vh' }}>
       {/* Header */}
       <Box mb={4}>
         <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
@@ -197,8 +200,8 @@ const UserDashboard: React.FC = () => {
       </Box>
 
       {/* Stats Overview */}
-      <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={6} md={3}>
+  <Grid container spacing={3} mb={4} sx={{ width: '100%' }}>
+  <Grid xs={12} sm={6} md={3}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -222,9 +225,9 @@ const UserDashboard: React.FC = () => {
               <Typography color="text.secondary">Total Bookings</Typography>
             </Card>
           </motion.div>
-        </Grid>
+  </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+  <Grid xs={12} sm={6} md={3}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -243,14 +246,14 @@ const UserDashboard: React.FC = () => {
                 <PaymentIcon />
               </Avatar>
               <Typography variant="h4" sx={{ fontWeight: 700, color: 'success.main' }}>
-                ${user.totalSpent}
+                ₹{user.totalSpent}
               </Typography>
               <Typography color="text.secondary">Total Spent</Typography>
             </Card>
           </motion.div>
-        </Grid>
+  </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+  <Grid xs={12} sm={6} md={3}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -274,9 +277,9 @@ const UserDashboard: React.FC = () => {
               <Typography color="text.secondary">Loyalty Points</Typography>
             </Card>
           </motion.div>
-        </Grid>
+  </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+  <Grid xs={12} sm={6} md={3}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -300,13 +303,13 @@ const UserDashboard: React.FC = () => {
               <Typography color="text.secondary">Saved Spaces</Typography>
             </Card>
           </motion.div>
-        </Grid>
+  </Grid>
       </Grid>
 
       {/* Loyalty Status */}
-      <Card sx={{ mb: 4, p: 3, background: `linear-gradient(135deg, ${currentTier.color}20 0%, ${currentTier.color}10 100%)` }}>
+  <Card sx={{ mb: 4, p: 3, background: `linear-gradient(135deg, ${currentTier.color}20 0%, ${currentTier.color}10 100%)` }}>
         <Grid container spacing={3} alignItems="center">
-          <Grid item xs={12} md={8}>
+          <Grid xs={12} md={8}>
             <Box display="flex" alignItems="center" mb={2}>
               <Badge
                 badgeContent={currentTier.name}
@@ -361,7 +364,7 @@ const UserDashboard: React.FC = () => {
             )}
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid xs={12} md={4}>
             <Paper elevation={1} sx={{ p: 2, bgcolor: 'white' }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
                 Your Benefits:
@@ -459,15 +462,16 @@ const UserDashboard: React.FC = () => {
                     <ListItemSecondaryAction>
                       <Stack alignItems="flex-end" spacing={1}>
                         <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                          ${booking.amount}
+                          ₹{booking.amount}
                         </Typography>
                         {booking.status === 'upcoming' && (
                           <Button
                             variant="outlined"
                             size="small"
                             startIcon={<QrCodeIcon />}
+                            sx={{ fontFamily: 'monospace', letterSpacing: 1 }}
                           >
-                            Access Code
+                            {`AC-${booking.id.toString().slice(-4)}-${(booking.date || '').replace(/-/g, '').slice(-4)}`}
                           </Button>
                         )}
                         {booking.status === 'completed' && booking.rating && (
@@ -497,7 +501,7 @@ const UserDashboard: React.FC = () => {
 
             <Grid container spacing={3}>
               {favoriteSpaces.map((space, index) => (
-                <Grid item xs={12} sm={6} md={4} key={space.id}>
+                <Grid xs={12} sm={6} md={4} key={space.id}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -532,7 +536,7 @@ const UserDashboard: React.FC = () => {
                         </Typography>
                         <Box display="flex" justifyContent="space-between" alignItems="center">
                           <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                            ${space.price}/hour
+                            ₹{space.price}/hour
                           </Typography>
                           <Box display="flex" alignItems="center">
                             <StarIcon sx={{ fontSize: 16, color: 'warning.main', mr: 0.5 }} />
@@ -603,7 +607,8 @@ const UserDashboard: React.FC = () => {
           </Box>
         </TabPanel>
       </Paper>
-    </Container>
+  {/* End of dashboard content */}
+    </Box>
   );
 };
 

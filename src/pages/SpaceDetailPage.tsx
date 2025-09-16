@@ -3,13 +3,11 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
   CardContent,
   Button,
   Avatar,
   Rating,
-  Chip,
   Divider,
   Paper,
   Stack,
@@ -25,12 +23,12 @@ import {
   Dialog,
   DialogContent,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import {
   LocationOn as LocationIcon,
   Star as StarIcon,
   People as PeopleIcon,
   Square as SquareIcon,
-  Schedule as ScheduleIcon,
   Security as SecurityIcon,
   Wifi as WifiIcon,
   LocalParking as ParkingIcon,
@@ -43,7 +41,7 @@ import {
   ArrowBack as ArrowBackIcon,
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 interface TabPanelProps {
@@ -176,8 +174,8 @@ const SpaceDetailPage: React.FC = () => {
       </Box>
 
       <Grid container spacing={4}>
-        {/* Image Gallery */}
-        <Grid item xs={12} md={8}>
+  {/* Image Gallery */}
+  <Grid xs={12} md={8}>
           <Card sx={{ borderRadius: 3, overflow: 'hidden' }}>
             <Box sx={{ position: 'relative' }}>
               <img
@@ -273,12 +271,12 @@ const SpaceDetailPage: React.FC = () => {
           </Card>
         </Grid>
 
-        {/* Booking Card */}
-        <Grid item xs={12} md={4}>
+    {/* Booking Card */}
+  <Grid xs={12} md={4}>
           <Card sx={{ borderRadius: 3, position: 'sticky', top: 100 }}>
             <CardContent sx={{ p: 3 }}>
               <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-                ${space.price}
+                ₹{space.price}
                 <Typography component="span" variant="h6" color="text.secondary">
                   /hour
                 </Typography>
@@ -389,7 +387,7 @@ const SpaceDetailPage: React.FC = () => {
         <TabPanel value={tabValue} index={0}>
           <Grid container spacing={2}>
             {space.amenities.map((amenity, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Grid xs={12} sm={6} md={4} key={index}>
                 <Paper
                   elevation={1}
                   sx={{
@@ -412,7 +410,7 @@ const SpaceDetailPage: React.FC = () => {
         {/* Availability Tab */}
         <TabPanel value={tabValue} index={1}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
                 Available Hours
               </Typography>
@@ -431,22 +429,22 @@ const SpaceDetailPage: React.FC = () => {
                 </Box>
               </Stack>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid xs={12} md={6}>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
                 Pricing Details
               </Typography>
               <Stack spacing={2}>
                 <Box display="flex" justifyContent="space-between">
                   <Typography>Base Rate:</Typography>
-                  <Typography fontWeight={600}>${space.pricing.basePrice}/hour</Typography>
+                  <Typography fontWeight={600}>₹{space.pricing.basePrice}/hour</Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between">
                   <Typography>Weekend Surcharge:</Typography>
-                  <Typography fontWeight={600}>+${space.pricing.weekendSurcharge}/hour</Typography>
+                  <Typography fontWeight={600}>+₹{space.pricing.weekendSurcharge}/hour</Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between">
                   <Typography>Holiday Surcharge:</Typography>
-                  <Typography fontWeight={600}>+${space.pricing.holidaySurcharge}/hour</Typography>
+                  <Typography fontWeight={600}>+₹{space.pricing.holidaySurcharge}/hour</Typography>
                 </Box>
                 <Box display="flex" justifyContent="space-between">
                   <Typography>Minimum Booking:</Typography>

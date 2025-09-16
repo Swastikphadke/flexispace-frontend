@@ -26,7 +26,7 @@ export interface Space {
   spaceType: 'parking' | 'hall' | 'playground' | 'office' | 'outdoor' | 'other';
   pricing: {
     basePrice: number; // per hour
-    currency: 'USD';
+    currency: 'INR';
     dynamicPricing: boolean;
     minimumHours: number;
     maximumHours: number;

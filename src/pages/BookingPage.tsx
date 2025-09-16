@@ -3,9 +3,7 @@ import {
   Container,
   Typography,
   Box,
-  Grid,
   Card,
-  CardContent,
   Button,
   Stepper,
   Step,
@@ -15,8 +13,6 @@ import {
   Divider,
   Chip,
   TextField,
-  FormControlLabel,
-  Checkbox,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -27,12 +23,11 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Avatar,
 } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import {
   CalendarToday as CalendarIcon,
-  Schedule as ScheduleIcon,
-  Payment as PaymentIcon,
+  
   CheckCircle as CheckIcon,
   Person as PersonIcon,
   Email as EmailIcon,
@@ -42,7 +37,7 @@ import {
   TableRestaurant as CateringIcon,
   Build as EquipmentIcon,
   ArrowBack as ArrowBackIcon,
-  AccessTime as TimeIcon,
+  
   AttachMoney as MoneyIcon,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
@@ -91,11 +86,11 @@ const BookingPage: React.FC = () => {
 
   // Mock space data
   const space = {
-    title: 'Lincoln Elementary School Playground',
+    title: 'Indiranagar Community Ground',
     image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-    basePrice: 45,
+    basePrice: 1200,
     capacity: 150,
-    location: 'Downtown, San Francisco',
+    location: 'Indiranagar, Bengaluru',
   };
 
   // Mock services
@@ -104,7 +99,7 @@ const BookingPage: React.FC = () => {
       id: '1',
       name: 'Professional Cleaning',
       provider: 'CleanPro SF',
-      price: 120,
+  price: 3500,
       category: 'cleaning',
       icon: <CleaningIcon />,
       description: 'Complete pre and post-event cleaning service',
@@ -113,7 +108,7 @@ const BookingPage: React.FC = () => {
       id: '2',
       name: 'Security Guard',
       provider: 'SecureSpace',
-      price: 80,
+  price: 2000,
       category: 'security',
       icon: <SecurityIcon />,
       description: 'Professional security personnel for your event',
@@ -122,7 +117,7 @@ const BookingPage: React.FC = () => {
       id: '3',
       name: 'Sound System Rental',
       provider: 'AudioTech',
-      price: 150,
+  price: 4500,
       category: 'equipment',
       icon: <EquipmentIcon />,
       description: 'Professional sound system with microphones',
@@ -131,7 +126,7 @@ const BookingPage: React.FC = () => {
       id: '4',
       name: 'Catering Service',
       provider: 'Local Bites',
-      price: 25,
+  price: 300,
       category: 'catering',
       icon: <CateringIcon />,
       description: 'Per person catering with local specialties',
@@ -183,6 +178,23 @@ const BookingPage: React.FC = () => {
     setTimeout(() => {
       setIsProcessing(false);
       setBookingConfirmed(true);
+
+      // Save booking to localStorage
+      const booking = {
+        id: Date.now(),
+        space: {
+          title: space.title,
+          image: space.image,
+          location: space.location,
+        },
+        date: bookingData.date,
+        time: `${bookingData.startTime} - ${bookingData.endTime}`,
+        status: 'upcoming',
+        amount: calculateTotal(),
+      };
+      const prev = JSON.parse(localStorage.getItem('bookings') || '[]');
+      localStorage.setItem('bookings', JSON.stringify([booking, ...prev]));
+
       setTimeout(() => {
         setSmartContractDialog(false);
         navigate('/dashboard');
@@ -199,7 +211,7 @@ const BookingPage: React.FC = () => {
               Select Your Date & Time
             </Typography>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
+              <Grid xs={12} md={4}>
                 <TextField
                   fullWidth
                   label="Event Date"
@@ -209,7 +221,7 @@ const BookingPage: React.FC = () => {
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid xs={12} md={4}>
                 <TextField
                   fullWidth
                   label="Start Time"
@@ -219,7 +231,7 @@ const BookingPage: React.FC = () => {
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              <Grid xs={12} md={4}>
                 <TextField
                   fullWidth
                   label="End Time"
@@ -229,7 +241,7 @@ const BookingPage: React.FC = () => {
                   InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Expected Guest Count"
@@ -253,11 +265,11 @@ const BookingPage: React.FC = () => {
                   </Box>
                   <Box display="flex" justifyContent="space-between">
                     <Typography>Base Price:</Typography>
-                    <Typography fontWeight={600}>${space.basePrice}/hour</Typography>
+                    <Typography fontWeight={600}>₹{space.basePrice}/hour</Typography>
                   </Box>
                   <Box display="flex" justifyContent="space-between">
                     <Typography>Subtotal:</Typography>
-                    <Typography fontWeight={600}>${space.basePrice * calculateHours()}</Typography>
+                    <Typography fontWeight={600}>₹{space.basePrice * calculateHours()}</Typography>
                   </Box>
                 </Stack>
               </Paper>
@@ -279,7 +291,7 @@ const BookingPage: React.FC = () => {
               {availableServices.map((service) => {
                 const isSelected = selectedServices.find(s => s.id === service.id);
                 return (
-                  <Grid item xs={12} md={6} key={service.id}>
+                  <Grid xs={12} md={6} key={service.id}>
                     <Paper
                       elevation={isSelected ? 3 : 1}
                       sx={{
@@ -308,7 +320,7 @@ const BookingPage: React.FC = () => {
                           </Typography>
                         </Box>
                         <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                          ${service.price}{service.category === 'catering' ? '/person' : ''}
+                          ₹{service.price}{service.category === 'catering' ? '/person' : ''}
                         </Typography>
                       </Box>
                       <Typography variant="body2" color="text.secondary">
@@ -341,7 +353,7 @@ const BookingPage: React.FC = () => {
                       </ListItemIcon>
                       <ListItemText
                         primary={service.name}
-                        secondary={`${service.provider} - $${service.price}${service.category === 'catering' ? '/person' : ''}`}
+                        secondary={`${service.provider} - ₹${service.price}${service.category === 'catering' ? '/person' : ''}`}
                       />
                     </ListItem>
                   ))}
@@ -358,7 +370,7 @@ const BookingPage: React.FC = () => {
               Contact Information
             </Typography>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Full Name"
@@ -372,7 +384,7 @@ const BookingPage: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Email Address"
@@ -387,7 +399,7 @@ const BookingPage: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid xs={12} md={6}>
                 <TextField
                   fullWidth
                   label="Phone Number"
@@ -401,7 +413,7 @@ const BookingPage: React.FC = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <TextField
                   fullWidth
                   label="Special Requests or Notes"
@@ -424,7 +436,7 @@ const BookingPage: React.FC = () => {
             </Typography>
 
             <Grid container spacing={4}>
-              <Grid item xs={12} md={8}>
+              <Grid xs={12} md={8}>
                 <Paper elevation={1} sx={{ p: 3, mb: 3 }}>
                   <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                     Booking Details
@@ -482,7 +494,7 @@ const BookingPage: React.FC = () => {
                 </Paper>
               </Grid>
 
-              <Grid item xs={12} md={4}>
+              <Grid xs={12} md={4}>
                 <Paper elevation={2} sx={{ p: 3, bgcolor: 'grey.50' }}>
                   <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
                     Price Breakdown
@@ -490,13 +502,13 @@ const BookingPage: React.FC = () => {
                   <Stack spacing={2}>
                     <Box display="flex" justifyContent="space-between">
                       <Typography>Space rental ({calculateHours()}h)</Typography>
-                      <Typography>${space.basePrice * calculateHours()}</Typography>
+                      <Typography>₹{space.basePrice * calculateHours()}</Typography>
                     </Box>
                     {selectedServices.map((service) => (
                       <Box key={service.id} display="flex" justifyContent="space-between">
                         <Typography>{service.name}</Typography>
                         <Typography>
-                          ${service.category === 'catering' ? service.price * bookingData.guestCount : service.price}
+                          ₹{service.category === 'catering' ? service.price * bookingData.guestCount : service.price}
                         </Typography>
                       </Box>
                     ))}
@@ -506,7 +518,7 @@ const BookingPage: React.FC = () => {
                         Total
                       </Typography>
                       <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                        ${calculateTotal()}
+                        ₹{calculateTotal()}
                       </Typography>
                     </Box>
                   </Stack>
@@ -562,7 +574,7 @@ const BookingPage: React.FC = () => {
               </Typography>
               <Typography color="text.secondary">{space.location}</Typography>
               <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 600 }}>
-                ${space.basePrice}/hour
+                ₹{space.basePrice}/hour
               </Typography>
             </Box>
           </Box>
@@ -572,7 +584,7 @@ const BookingPage: React.FC = () => {
       {/* Stepper */}
       <Paper elevation={2} sx={{ p: 3, mb: 4, borderRadius: 3 }}>
         <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((step, index) => (
+          {steps.map((step) => (
             <Step key={step.label} completed={step.completed}>
               <StepLabel>{step.label}</StepLabel>
             </Step>
