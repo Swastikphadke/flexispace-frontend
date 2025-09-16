@@ -22,40 +22,38 @@ FlexiSpace transforms static, inefficiently used infrastructure into a fluid, on
 
 Visit the live application: [FlexiSpace Demo](http://localhost:5173) *(when running locally)*
 
+
 ## ✨ Key Features
 
-### 🔍 AI-Powered Discovery
-- **Natural Language Search**: "Find a quiet place for 20-person yoga workshop"
-- **Smart Recommendations**: AI understands intent and context
-- **Advanced Filtering**: Location, capacity, price, amenities, and more
+### 🔍 Smart Search & Interactive Map
+- **Live Map View**: Explore venues on an interactive map of Bengaluru
+- **Advanced Filtering**: Filter by price, capacity, amenities, and more in real time
+- **Instant Results**: Listings and map update as you type or adjust filters
 
-### 💰 Dynamic Pricing Engine
-- **Market-Driven Rates**: Prices adjust based on real-time demand
-- **Tiered Pricing**: Peak/off-peak pricing for maximum efficiency
-- **Transparent Costs**: No hidden fees, clear breakdown
-
-### 🔐 Smart Contract Integration
-- **Automated Booking**: Blockchain-powered reservation system
-- **Secure Payments**: Escrow-based payment protection
-- **Instant Access**: QR code generation for seamless entry
-- **Trust & Transparency**: Immutable transaction records
+### 💡 Modern Dashboard & Bookings
+- **Full-Width Dashboard**: Clean, edge-to-edge layout for all user data
+- **Live Booking History**: See all your bookings, including new ones, instantly
+- **Access Codes**: Unique access code for each upcoming booking
 
 ### 🛠️ Integrated Services Marketplace
 - **One-Stop Shopping**: Book space + services in one transaction
 - **Professional Services**: Cleaning, security, equipment, catering
 - **Verified Providers**: Quality-assured service partners
-- **Bundle Discounts**: Save when booking multiple services
 
 ### 🏆 Loyalty & Rewards System
 - **Tier Progression**: Bronze → Silver → Gold → Platinum
 - **Exclusive Benefits**: Discounts, priority access, premium support
 - **Point Accumulation**: Earn rewards for every booking
-- **Community Recognition**: Build reputation in the ecosystem
 
 ### 🌐 360° Virtual Experience
 - **Virtual Tours**: Explore spaces before booking
 - **High-Quality Media**: Professional photography and videography
 - **Detailed Information**: Amenities, rules, availability, pricing
+
+### 🚀 UX Improvements
+- **No Results Feedback**: Clear message when no venues match filters
+- **Mobile Responsive**: Works on all device sizes
+- **Fast, Smooth Animations**: Framer Motion for delightful transitions
 
 ## 🏗️ Architecture
 
