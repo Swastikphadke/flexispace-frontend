@@ -302,6 +302,7 @@ const HomePage: React.FC = () => {
             p: 4,
             bgcolor: 'white',
             border: '1px solid #F3F4F6',
+            marginTop : '56px',
           }}
         >
           <Grid container spacing={4}>
