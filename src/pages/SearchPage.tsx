@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { LatLngExpression } from 'leaflet'; // ✅ fixed: import at top-level
 import { Box, Container, Typography, Card, CardMedia, CardContent, Chip, IconButton, Button, TextField, MenuItem, Select, FormControl, InputLabel, Stack, Rating } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import {
@@ -17,9 +16,6 @@ import {
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MapPin, Users } from 'lucide-react';
-
-// Example map position (Bengaluru)
-const position: LatLngExpression = [12.9716, 77.5946]; // [lat, lng]
 
 // UPDATED: 10 Comprehensive Bengaluru Venues with FIXED icons
 const venues = [
@@ -247,19 +243,24 @@ const SearchPage: React.FC = () => {
         {/* Map View */}
         <Box sx={{ mb: 3 }}>
           <Card sx={{ height: 360, borderRadius: 3, overflow: 'hidden' }}>
-            <MapContainer
-              center={position}
-              zoom={13}
-              style={{ height: 400, width: "100%" }}
-              scrollWheelZoom={true}
-            >
+            import { LatLngExpression } from "leaflet";
+
+const position: LatLngExpression = [12.9716, 77.5946]; // [lat, lng]
+
+<MapContainer
+  center={position}
+  zoom={13}
+  style={{ height: 400, width: "100%" }}
+  scrollWheelZoom={true}
+>
+
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               {/* Example markers for venues with fake coordinates */}
               {venues.slice(0, 5).map((venue, i) => (
-                <Marker key={venue.id} position={[12.97 + i * 0.01, 77.59 + i * 0.01] as LatLngExpression}>
+                <Marker key={venue.id} position={[12.97 + i * 0.01, 77.59 + i * 0.01]}>
                   <Popup>
                     <b>{venue.name}</b><br />
                     {venue.location}
@@ -329,7 +330,7 @@ const SearchPage: React.FC = () => {
               value={selectedAmenities}
               onChange={e => setSelectedAmenities(typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value)}
               label="Amenities"
-              renderValue={selected => (selected as string[]).join(', ')}
+              renderValue={selected => selected.join(', ')}
             >
               {['High-Speed WiFi', 'Photo Setup', '4K Display', 'Enterprise WiFi', 'Free Parking', 'Catering Allowed', 'Bar Service', 'Sound System', 'Pro Audio', 'Soundproof', 'Commercial Kitchen', 'Parking Available', '4K Projection', 'Climate Control', 'Refreshments', 'Ample Parking', 'Catering Kitchen'].map(a => (
                 <MenuItem key={a} value={a}>{a}</MenuItem>
@@ -504,3 +505,4 @@ const SearchPage: React.FC = () => {
 };
 
 export default SearchPage;
+
