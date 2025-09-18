@@ -243,7 +243,17 @@ const SearchPage: React.FC = () => {
         {/* Map View */}
         <Box sx={{ mb: 3 }}>
           <Card sx={{ height: 360, borderRadius: 3, overflow: 'hidden' }}>
-            <MapContainer center={[12.9716, 77.5946]} zoom={12} style={{ height: 360, width: '100%' }} scrollWheelZoom={false}>
+            import { LatLngExpression } from "leaflet";
+
+const position: LatLngExpression = [12.9716, 77.5946]; // [lat, lng]
+
+<MapContainer
+  center={position}
+  zoom={13}
+  style={{ height: 400, width: "100%" }}
+  scrollWheelZoom={true}
+>
+
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
