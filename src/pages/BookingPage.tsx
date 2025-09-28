@@ -353,7 +353,7 @@ const BookingPage: React.FC = () => {
                       </ListItemIcon>
                       <ListItemText
                         primary={service.name}
-                        secondary={`${service.provider} - ₹${service.price}${service.category === 'catering' ? '/person' : ''}`}
+                        secondary={`${service.provider} + ₹${service.price}${service.category === 'catering' ? '/person' : ''}`}
                       />
                     </ListItem>
                   ))}
