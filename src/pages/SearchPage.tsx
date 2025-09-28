@@ -83,28 +83,13 @@ const venues = [
     tags: ['Rooftop Views', 'Instagram-worthy'],
     description: 'Stunning rooftop venue with panoramic city views, perfect for startup events and networking.',
   },
+
   {
     id: 5,
-    name: 'VoiceBox - JP Nagar Podcast Studio',
-    location: 'JP Nagar, Bengaluru',
-    price: '₹1,800/hour',
-    rating: 5.0,
-    reviews: 45,
-    image: 'https://images.unsplash.com/photo-1544571171-b6ad9c5f2d12?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-    capacity: 'Up to 4 people',
-    amenities: [
-      { icon: <MusicNoteIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Pro Audio' },
-      { icon: <AcUnitIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Soundproof' },
-    ],
-    tags: ['Fully Equipped', 'Professional'],
-    description: 'Fully soundproofed podcast studio with professional mics and on-site audio technician.',
-  },
-  {
-    id: 6,
     name: 'The Cook\'s Table - Malleswaram',
     location: 'Malleswaram, Bengaluru',
     price: '₹5,000/half-day',
-    rating: 4.8,
+    rating: 4.8,    
     reviews: 60,
     image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
     capacity: 'Up to 15 people',
@@ -116,7 +101,7 @@ const venues = [
     description: 'Certified commercial kitchen perfect for culinary workshops and F&B startups.',
   },
   {
-    id: 7,
+    id: 6,
     name: 'The Floor - Basavanagudi Dance Studio',
     location: 'Basavanagudi, Bengaluru',
     price: '₹2,000/hour',
@@ -132,13 +117,13 @@ const venues = [
     description: 'Beautiful studio with mirrored walls, ideal for dance classes, yoga, and fitness bootcamps.',
   },
   {
-    id: 8,
+    id: 7,
     name: 'The Screening Room - Lavelle Road',
     location: 'Lavelle Road, Bengaluru',
     price: '₹7,500/3-hour slot',
     rating: 5.0,
     reviews: 30,
-    image: 'https://images.unsplash.com/photo-1489599112536-2c5c93742038?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    image: 'https://media-cdn.tripadvisor.com/media/photo-s/15/98/79/1b/bioscope-mini-theatre.jpg',
     capacity: 'Up to 20 people',
     amenities: [
       { icon: <TvIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: '4K Projection' },
@@ -148,13 +133,13 @@ const venues = [
     description: 'Exclusive mini-theatre with 4K projection and Dolby Atmos sound for private screenings.',
   },
   {
-    id: 9,
+    id: 8,
     name: 'WeWork Residency Road - Training Hall',
     location: 'Residency Road, Bengaluru',
     price: '₹6,000/hour',
     rating: 4.7,
     reviews: 88,
-    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRe8RCTrQkdSbTgWxFZJb7fl-oprB42z4yKpg&s',
     capacity: 'Up to 50 people',
     amenities: [
       { icon: <WifiIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Enterprise WiFi' },
@@ -164,20 +149,21 @@ const venues = [
     description: 'Versatile training space in the heart of the city, perfect for corporate seminars and workshops.',
   },
   {
-    id: 10,
-    name: 'The Secret Garden - Whitefield',
-    location: 'Whitefield, Bengaluru',
-    price: '₹15,000/day',
-    rating: 4.8,
-    reviews: 55,
-    image: 'https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-    capacity: 'Up to 80 people',
+    id: 9,
+    name: 'Ramaiah Sports Ground',
+    location: 'Mathikere, Bengaluru',
+    price: '₹12,00/hour',
+    rating: 4.0,
+    reviews: 65,
+    image: 'http://d2e9h3gjmozu47.cloudfront.net/Gallery/sports/sports-full/a.jpg',
+    capacity: 'Up to 600 people',
     amenities: [
-      { icon: <LocalParkingIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Ample Parking' },
-      { icon: <KitchenIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Catering Kitchen' },
+      { icon: <LocalParkingIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Parking' },
+      { icon: <AcUnitIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Washrooms' },
+      { icon: <RestaurantIcon sx={{ fontSize: 16, color: '#6B7280' }} />, label: 'Outdoor Space' },
     ],
-    tags: ['Outdoor Space', 'Garden Venue'],
-    description: 'Serene private garden venue ideal for intimate gatherings and outdoor events.',
+    tags: ['Large Capacity', 'Sports Venue'],
+    description: 'Spacious outdoor sports ground perfect for large-scale events, tournaments, and community gatherings with ample parking and facilities.',
   },
 ];
 
@@ -243,19 +229,13 @@ const SearchPage: React.FC = () => {
         {/* Map View */}
         <Box sx={{ mb: 3 }}>
           <Card sx={{ height: 360, borderRadius: 3, overflow: 'hidden' }}>
-            import { LatLngExpression } from "leaflet";
-
-const position: LatLngExpression = [12.9716, 77.5946]; // [lat, lng]
-
-<MapContainer
-  center={position}
-  zoom={13}
-  style={{ height: 400, width: "100%" }}
-  scrollWheelZoom={true}
->
+            <MapContainer
+              center={[12.9716, 77.5946]}
+              zoom={13}
+              style={{ height: 400, width: "100%" }}
+            >
 
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               {/* Example markers for venues with fake coordinates */}
