@@ -91,41 +91,41 @@ const UserDashboard: React.FC = () => {
     {
       id: 1,
       space: {
-        title: 'Lincoln Elementary Playground',
-        image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-        location: 'Downtown, SF',
+        title: 'Koramangala Rooftops',
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+        location: 'Koramangala, Bengaluru',
       },
       date: '2024-03-20',
       time: '2:00 PM - 6:00 PM',
       status: 'completed',
-      amount: 180,
+      amount: 8500,
       rating: 5,
       smartContract: '0x1234...5678',
     },
     {
       id: 2,
       space: {
-        title: 'Tech Corp Conference Center',
-        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-        location: 'SOMA, SF',
+        title: 'VoiceBox - JP Nagar Podcast Studio',
+        image: 'https://i.ytimg.com/vi/5Nnypg0AmPI/maxresdefault.jpg',  
+        location: 'JP Nagar, Bengaluru',
       },
       date: '2024-03-25',
       time: '10:00 AM - 2:00 PM',
-      status: 'upcoming',
-      amount: 500,
+      status: 'completed',
+      amount: 1800,
       smartContract: '0xabcd...efgh',
     },
     {
       id: 3,
       space: {
-        title: 'City Hall Community Room',
-        image: 'https://images.unsplash.com/photo-1582653291997-079a1c04e5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-        location: 'Civic Center, SF',
+        title: 'Koramangala Rooftops',
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+        location: 'Koramangala, Bengaluru',
       },
       date: '2024-02-15',
       time: '6:00 PM - 10:00 PM',
       status: 'cancelled',
-      amount: 140,
+      amount: 8500,
     },
   ];
 
@@ -133,17 +133,17 @@ const UserDashboard: React.FC = () => {
   const favoriteSpaces = [
     {
       id: 1,
-      title: 'Lincoln Elementary Playground',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-      price: 45,
-      rating: 4.8,
+      title: 'The Floor - Basavanagudi Dance Studio',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+      price: 2000,
+      rating: 4.9,
     },
     {
       id: 2,
-      title: 'Tech Corp Conference Center',
-      image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80',
-      price: 125,
-      rating: 4.9,
+      title: 'Koramangala Rooftops',
+        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+      price: 8500,
+      rating: 5.0,
     },
   ];
 
@@ -194,6 +194,22 @@ const UserDashboard: React.FC = () => {
         <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
           Welcome back, {user.name.split(' ')[0]}! 👋
         </Typography>
+        
+        {/* Tier-1 Badge */}
+        <Chip
+          label="Tier-1"
+          sx={{
+            backgroundColor: '#FF5A5F',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            px: 2,
+            py: 0.5,
+            height: 'auto',
+            mb: 2,
+          }}
+        />
+        
         <Typography variant="h6" color="text.secondary">
           Manage your bookings and track your FlexiSpace journey
         </Typography>
@@ -566,6 +582,26 @@ const UserDashboard: React.FC = () => {
               <Alert severity="info">
                 Account management features will be available in the next update.
               </Alert>
+
+              <Paper elevation={1} sx={{ p: 3 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
+                  Booking History
+                </Typography>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    localStorage.removeItem('bookings');
+                    window.location.reload();
+                  }}
+                  sx={{ mb: 2 }}
+                >
+                  Clear All Booking History
+                </Button>
+                <Typography variant="body2" color="text.secondary">
+                  This will permanently delete all your booking history.
+                </Typography>
+              </Paper>
 
               <Paper elevation={1} sx={{ p: 3 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>

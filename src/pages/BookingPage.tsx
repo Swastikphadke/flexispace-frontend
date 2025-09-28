@@ -86,11 +86,11 @@ const BookingPage: React.FC = () => {
 
   // Mock space data
   const space = {
-    title: 'Indiranagar Community Ground',
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
+    title: 'Ramaiah Sports Ground',
+    image: 'http://d2e9h3gjmozu47.cloudfront.net/Gallery/sports/sports-full/a.jpg',
     basePrice: 1200,
-    capacity: 150,
-    location: 'Indiranagar, Bengaluru',
+    capacity: 600,
+    location: 'Mathikere, Bengaluru',
   };
 
   // Mock services
@@ -668,6 +668,96 @@ const BookingPage: React.FC = () => {
           </DialogActions>
         )}
       </Dialog>
+
+      {/* Virtual Tour Section */}
+      <Card sx={{ mb: 3, p: 3 }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+          Virtual Tour
+        </Typography>
+        <Box
+          sx={{
+            position: 'relative',
+            width: '100%',
+            height: 0,
+            paddingBottom: '56.25%', // 16:9 aspect ratio
+            overflow: 'hidden',
+            borderRadius: 2,
+          }}
+        >
+            {/* Thumbnail overlay */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                backgroundColor: '#FF5A5F', // Fallback background
+                '&:hover': {
+                  opacity: 0.9,
+                },
+              }}
+              onClick={() => {
+                // Show video when thumbnail is clicked
+                const iframe = document.getElementById('virtual-tour-video');
+                if (iframe) {
+                  iframe.style.display = 'block';
+                  iframe.src = 'https://drive.google.com/file/d/1GbPpbjGvJ2lJ2aAXTlAH667aTYuwKr3i/preview';
+                }
+              }}
+            >
+              <img
+                src="https://i.postimg.cc/rmzV9JV1/Gemini-Generated-Image-hibygqhibygqhiby.png"
+                alt="Virtual Tour Thumbnail"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+                onError={() => {
+                  console.log('Image failed to load');
+                }}
+              />
+              <Box
+                sx={{
+                  position: 'absolute',
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  fontSize: '2rem',
+                }}
+              >
+                ▶
+              </Box>
+            </Box>
+          
+          {/* Hidden iframe */}
+          <iframe
+            id="virtual-tour-video"
+            title="Ramaiah Sports Ground Virtual Tour"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              border: 'none',
+              display: 'none',
+            }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </Box>
+      </Card>
     </Container>
   );
 };
