@@ -71,10 +71,10 @@ const UserDashboard: React.FC = () => {
     email: 'sarah.johnson@email.com',
     memberSince: '2023',
     avatar: 'S',
-    loyaltyPoints: 2450,
+    loyaltyPoints: 400,
     loyaltyTier: 'Gold',
-    totalBookings: 12,
-    totalSpent: 1680,
+    totalBookings: 4,
+    totalSpent: 27000,
     savedSpaces: 8,
   };
 
