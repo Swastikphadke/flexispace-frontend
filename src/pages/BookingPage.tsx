@@ -99,7 +99,7 @@ const BookingPage: React.FC = () => {
       id: '1',
       name: 'Professional Cleaning',
       provider: 'CleanPro SF',
-  price: 3500,
+      price: 3500,
       category: 'cleaning',
       icon: <CleaningIcon />,
       description: 'Complete pre and post-event cleaning service',
@@ -703,7 +703,7 @@ const BookingPage: React.FC = () => {
               }}
               onClick={() => {
                 // Show video when thumbnail is clicked
-                const iframe = document.getElementById('virtual-tour-video');
+                const iframe = document.getElementById('virtual-tour-video') as HTMLIFrameElement | null;
                 if (iframe) {
                   iframe.style.display = 'block';
                   iframe.src = 'https://drive.google.com/file/d/1GbPpbjGvJ2lJ2aAXTlAH667aTYuwKr3i/preview';
